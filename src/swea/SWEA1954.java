@@ -11,28 +11,34 @@ public class SWEA1954 {
 		Scanner sc = new Scanner(System.in);
 
 		int T = sc.nextInt();
-		for (int t = 0; t < T; t++) {
+		for (int t = 1; t <= T; t++) {
 			int N = sc.nextInt();
-			int[][] nums = new int[N][N];
-			int dir = 0; // 현재 방향 인덱스
-			int initR = 0, initC = 0; // 시작 좌표
-
-			for (int i = 1; i <= N * N; i++) {
-				nums[initR][initC] = i;
-				int tempR = initR + dr[dir];
-				int tempC = initC + dc[dir];
-				if (tempR < 0 || tempR >= N || tempC < 0 || tempC >= N || nums[tempR][tempC] != 0) {
-					dir = (dir + 1) % 4;
-					tempR = initR + dr[dir];
-					tempC = initC + dc[dir];
+			
+			
+			int cnt=1;
+			int initR=0;
+			int initC=0;
+			int[][]snail = new int[N][N];
+			int d = 0;
+			
+			while(cnt<=N*N) {
+				
+				snail[initR][initC] = cnt++;
+				
+				int nr = initR + dr[d];
+				int nc = initC + dc[d];
+				
+				if(nr < 0 || nr >= N || nc < 0 || nc >= N || snail[nr][nc]!=0) {
+					d = (d+1)%4;
 				}
-				initR = tempR;
-				initC = tempC;
+				
+				initR = initR + dr[d];
+				initC = initC + dc[d];
 			}
-			System.out.printf("#%d\n", t);
+			System.out.println("#"+t);
 			for (int i = 0; i < N; i++) {
 				for (int j = 0; j < N; j++) {
-					System.out.print(nums[i][j] + " ");
+					System.out.print(snail[i][j]+" ");
 				}
 				System.out.println();
 			}

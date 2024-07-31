@@ -7,20 +7,19 @@ public class SWEA2005 {
 	public static void main(String[] args) {
 		Scanner sc = new Scanner(System.in);
 		int T =sc.nextInt();
-		int N = sc.nextInt();
+
 		for (int i = 0; i < T; i++) {
+			int N = sc.nextInt();
 			
 			for (int r = 0; r < N; r++) {
-				if(r==0) {
-					System.out.println("1");
+				for (int j = 1; j <= r+1; j++) {
+					if(j==1||j==r+1) {
+						System.out.print("1");
+					}else {
+					System.out.print(j);
+					}
 				}
-				if(r==1) {
-					System.out.println("1 1");
-				}
-				for (int c = 0; c <= r+1; c++) {
-					
-				}
-				
+				System.out.println();
 			}
 			
 			
