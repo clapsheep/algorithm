@@ -1,4 +1,4 @@
-package swea;
+package study0801;
 
 import java.io.BufferedReader;
 import java.io.IOException;

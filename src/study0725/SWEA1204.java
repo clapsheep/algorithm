@@ -1,4 +1,4 @@
-package swea;
+package study0725;
 
 import java.util.Scanner;
 
