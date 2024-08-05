@@ -12,74 +12,22 @@ public class SW1284 {
 		T = Integer.parseInt(br.readLine());
 		for (int t = 1; t <= T; t++) {
 			StringTokenizer st = new StringTokenizer(br.readLine());
-			int N = Integer.parseInt(st.nextToken());
-			int K = Integer.parseInt(st.nextToken());
-			int[][] arr = new int[N][N];
-			int cnt = 0;
-			int[] d = { -1, K };
+			int P = Integer.parseInt(st.nextToken());
+			int Q = Integer.parseInt(st.nextToken());
+			int R = Integer.parseInt(st.nextToken());
+			int S = Integer.parseInt(st.nextToken());
+			int W = Integer.parseInt(st.nextToken());
 			
-			for (int i = 0; i < N; i++) {
-				st = new StringTokenizer(br.readLine());
-				for (int j = 0; j < N; j++) {
-					arr[i][j] = Integer.parseInt(st.nextToken());
-				}
-			}
-			//열 확인
-			for (int r = 0; r < N; r++) {
-				for (int i = 0; i <= N - K ; i++) {
-					int sum = 0;
-					// 앞뒤 체크
-					int before = i + d[0];
-					int after = i + d[1];
-					if (before >= 0) {
-						if (arr[r][before] != 0) {
-							continue;
-						}
-					}
-					if (after < N) {
-						if (arr[r][after] != 0) {
-							continue;
-						}
-					}
-					
-					for (int j = i; j < i + K; j++) {
-						sum += arr[r][j];
-					}
-					if (sum == K) {
-						cnt++;
-					}
-				}
-			}
-			// 행 확인
-			for (int r = 0; r < N; r++) {
-				for (int i = 0; i <= N - K ; i++) {
-					int sum = 0;
-					
-					// 앞뒤 체크
-					int before = i + d[0];
-					int after = i + d[1];
-					if (before >= 0) {
-						if (arr[before][r] != 0) {
-							continue;
-					
-						}
-					}
-					if (after < N) {
-						if (arr[after][r] != 0) {
-							continue;
-						}
-					}
-	
-					for (int j = i; j < i + K; j++) {
-						sum += arr[j][r];
-					}
-					if (sum == K) {
-						cnt++;
-					}
-				}
+			
+			int a = P * W;
+			int b = Q;
+			if(W>R) {
+				b+=(W-R)*S;
 			}
 			
-			System.out.println("#" + t + " " + cnt);
+			
+			int min = Math.min(a, b);
+			System.out.println("#" + t + " " + min);
 		}
 
 	}
