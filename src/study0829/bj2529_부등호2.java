@@ -1,50 +1,61 @@
 package study0829;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class bj2529_부등호  {
+public class bj2529_부등호2 {
 	static int K;
 	static char[] sign;
 	static int N = 10;
 	static int[] nums = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 	static int[] choice;
 	static boolean[] v;
-	static List<String> res;
-	// 468ms
-		// dfs로 모든 부등호 사이에 숫자가 들어갈 경우를 찾은 후
-		// check로 성립하는 경우에만 sb로 담아서 리턴
-		// 나온 모든 결과물을 리스트에 담아서 첫번째(최소)와 마지막(최대)을 출력 -> 이 과정이 조금 비효율적 
+	static long max, min;
+	static String maxString, minString;
 
+	// 424ms
+	// dfs로 모든 부등호 사이에 숫자가 들어갈 경우를 찾은 후
+	// check로 성립하는 경우에만 sb로 담아서 리턴
+	// 나온 모든 결과물을 min와 max에 담아서 출력 -> 그래도 그리 안빠름 
 	public static void main(String[] args) throws IOException {
+		max = Long.MIN_VALUE;
+		min = Long.MAX_VALUE;
 		StringBuilder sb = new StringBuilder();
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		K = Integer.parseInt(br.readLine());
 		sign = new char[K];
+		
 		StringTokenizer st = new StringTokenizer(br.readLine());
 		for (int i = 0; i < K; i++) {
 			sign[i] = st.nextToken().charAt(0);
 		}
 		choice = new int[K + 1];
 		v = new boolean[N];
-		res = new ArrayList<>();
-
 		dfs(0);
-		sb.append(res.get(res.size()-1)).append("\n").append(res.get(0));
-		System.out.println(sb);
+		sb.append(maxString).append("\n").append(minString);
+		System.out.println(sb.toString());
 	}
-
+	
 	static void dfs(int cnt) {
 		if (cnt == K + 1) {
-			check(choice);
+			if (check(choice)) {
+				long num = arrToInt(choice);
+				min = Math.min(min, num);
+				max = Math.max(max, num);
+				if (min == num)
+					minString = arrToString(choice);
+				if (max == num)
+					maxString = arrToString(choice);
+			}
 			return;
 		}
 		for (int i = 0; i < N; i++) {
-			if (v[i])
-				continue;
+			if (v[i]) continue;
 			v[i] = true;
 			choice[cnt] = nums[i];
 			dfs(cnt + 1);
@@ -53,24 +64,36 @@ public class bj2529_부등호  {
 		}
 	}
 
-	static void check(int[] arr) {
+	static boolean check(int[] arr) {
 		for (int i = 0; i < K; i++) {
-			switch(sign[i]) {
+			switch (sign[i]) {
 			case '<':
-				if(arr[i]>arr[i+1]) return;
+				if (arr[i] > arr[i + 1])
+					return false;
 				break;
 			case '>':
-				if(arr[i]<arr[i+1]) return;
+				if (arr[i] < arr[i + 1])
+					return false;
 				break;
 			}
-			
 		}
+		return true;
+	}
+
+	static String arrToString(int[] arr) {
 		StringBuilder linkNum = new StringBuilder();
 		for (int i = 0; i < arr.length; i++) {
 			linkNum.append(arr[i]);
 		}
-		res.add(linkNum.toString());
-		
+		return linkNum.toString();
 	}
 
+	static long arrToInt(int[] arr) {
+		int tenPow = 0;
+		long res = 0;
+		for (int i = arr.length - 1; i >= 0; i--) {
+			res += arr[i] * Math.pow(10, tenPow++);
+		}
+		return res;
+	}
 }
