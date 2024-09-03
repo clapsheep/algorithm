@@ -11,61 +11,53 @@ import java.util.StringTokenizer;
 
 public class bj24444_너비우선탐색1 {
 	static int N, M, R;
-	static int[][] map;
 	static boolean[] v;
-	static List<Integer>[] adjList;
-
+	static List<Integer>[] adj;
+	static int[] res;
+	
 	public static void main(String[] args) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer st = new StringTokenizer(br.readLine());
 		N = Integer.parseInt(st.nextToken());
 		M = Integer.parseInt(st.nextToken());
 		R = Integer.parseInt(st.nextToken());
-		map = new int[N][N];
-//		for (int i = 0; i < M; i++) {
-//			st = new StringTokenizer(br.readLine());
-//			int n = Integer.parseInt(st.nextToken());
-//			int r = Integer.parseInt(st.nextToken());
-//			map[n-1][r-1] = 1;
-//			map[r-1][n-1] = 1;
-//		}
-		adjList = new ArrayList[N];
-		for (int i = 0; i < N; i++) {
-			adjList[i] = new ArrayList<>();
+
+		adj = new ArrayList[N+1];
+		for (int i = 1; i <= N; i++) {
+			adj[i] = new ArrayList<>();
 		}
 		for (int i = 0; i < M; i++) {
 			st = new StringTokenizer(br.readLine());
 			int n = Integer.parseInt(st.nextToken());
 			int r = Integer.parseInt(st.nextToken());
-			adjList[n-1].add(r-1);
-			adjList[r-1].add(n-1);
+			adj[n].add(r);
+			adj[r].add(n);
 		}
-		for (int i = 0; i < M; i++) {
-			Collections.sort(adjList[i]);
+		for (int i = 1; i <= N; i++) {
+			Collections.sort(adj[i]);
 		}
-		
-		v = new boolean[N];
-		bfs(R - 1);
+		res = new int[N];
+		v = new boolean[N+1];
+		StringBuilder sb = new StringBuilder();
+		bfs(R);
 		for (int i = 0; i < N; i++) {
-			if(!v[i])System.out.println(0);
+			sb.append(res[i]).append("\n");
 		}
+		System.out.println(sb.toString());
 	}
 
 	private static void bfs(int start) {
 		Queue<Integer> q = new LinkedList<>();
 		q.offer(start);
 		v[start] = true;
-		System.out.println(start + 1);
+		int cnt =1;
 		while (!q.isEmpty()) {
-			int s = q.poll();
-			for (int ss = 0; ss < adjList[s].size(); ss++) {
-				int e =adjList[s].get(ss);
-				if (v[e])continue;
-		
-					q.offer(e);
-					v[e] = true;
-					System.out.println(e + 1);
-				
+			int curr = q.poll();
+			res[curr-1] =cnt++; 
+			for (int w : adj[curr]) {
+				if(v[w])continue;
+				v[w]=true;
+				q.offer(w);
 			}
 		}
 

@@ -1,118 +1,106 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.StringTokenizer;
- 
-public class Solution2112_보호필름2 {
-    static int D,W,K,ans;
-    static int[] used;
-    static boolean [][] isB;
-    static boolean [] A;
-    static boolean [] B;
-    static boolean [][] tmp;
-    static boolean[] Pused;
-    static boolean close;
-    public static void main(String args[]) throws Exception
-    {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringBuilder sb = new StringBuilder();
-        StringTokenizer st;
-        int T=Integer.parseInt(br.readLine());
- 
-        for(int t = 1; t <= T; t++){
-            sb.setLength(0);
-            ans =Integer.MAX_VALUE;
-            close=false;
-            st = new StringTokenizer(br.readLine());
-            D=Integer.parseInt(st.nextToken());
-            W=Integer.parseInt(st.nextToken());
-            K=Integer.parseInt(st.nextToken());
-            isB = new boolean[D][W];
-            used = new int[D];
-             
-            A= new boolean[W];
-            B= new boolean[W];
-            Arrays.fill(B, true);
-            tmp = new boolean[D][W];
-            Pused = new boolean[D];
-                     
-            for (int i = 0; i < D; i++) {
-                st = new StringTokenizer(br.readLine());
-                for (int j = 0; j < W; j++) {
-                    if(Integer.parseInt(st.nextToken())==1)
-                        isB[i][j]=true;
-                }
-            }
-             
-            for (int i = 0; i < D; i++) {
-                subset(0,0,i);
-            }
-             
-            sb.append("#").append(t).append(" ").append(ans).append("\n");
-            System.out.print(sb.toString());
-        }
-    }
-    static void subset(int depth, int idx,int d) {
-        if(depth==D) {
-            if(idx == d) {
-                for (int i = 0; i < idx; i++) {
-                    tmp[used[i]]=isB[used[i]];
-                }
-                powerset(idx,0);
-                if(close)return;
-                for (int i = 0; i < idx; i++) {
-                    isB[used[i]]=tmp[used[i]];
-                }
-            }
-            return;
-        }
-        if(close)return;
-        subset(depth+1,idx,d);
-        used[idx]=depth;
-        subset(depth+1,idx+1,d);
-    }
-    static void powerset(int size,int depth) {
-        if(depth==size) {
-            for (int i = 0; i < size; i++) {
-                if(Pused[i]) {
-                    isB[used[i]]=A;
-                }else
-                    isB[used[i]]=B;
-            }
-            if(check()) {
-                close=true;
-                ans = size;
-            }
-            return;
-        }
-        if(close)return;
-        Pused[depth]=true;
-        powerset(size,depth+1);
-        Pused[depth]=false;
-        powerset(size,depth+1);
-         
-    }
-    static boolean check() {
-        boolean check = true;
-        for (int i = 0; i < W; i++) {
-            int sum=1;
-            boolean flag = isB[0][i];
-            for (int j = 1; j < D; j++) {
-                if(flag == isB[j][i]) {
-                    sum++;
-                }else {
-                    sum=1;
-                    flag = isB[j][i];
-                }
-                if(sum==K) {
-                    break;
-                }
-            }
-            if(sum<K) {
-                check=false;
-                break;
-            }
-        }
-        return check;
-    }
+import java.util.Scanner;
+
+public class Solution2112_보호필름2{
+
+	static int T;
+	static int D, W, K;
+	static int [][] map;
+	static int[] a0, a1;
+	static int ans;
+	public static void main(String[] args) {
+		
+		Scanner scann=new Scanner(System.in);
+		T=scann.nextInt();
+		for (int t = 1; t <= T; t++) {
+			D=scann.nextInt();
+			W=scann.nextInt();
+			K=scann.nextInt();
+			map=new int[D][W];
+			a0=new int[W];
+			a1=new int[W];
+			Arrays.fill(a1, 1);
+			for (int i = 0; i <D; i++) {
+				for (int j = 0; j < W; j++) {
+					map[i][j]=scann.nextInt();
+				}
+			}
+			ans=-1;
+			for (int i = 0; i <=K; i++) {
+				dfs(0,0,i);
+				if(ans!=-1){ break ;}
+			}
+			System.out.println("#"+t+" "+ans);
+		}
+	}
+	// index 행에 약품 처리
+	// k 약품 투입 행의 개수
+	public static void dfs(int cnt, int index, int k) {
+		
+		//if(ans!=-1){ return ;} // 
+		
+		if(cnt==k){  // 약품처리 회수가 k가 되면 
+			if(check()){
+				ans=k;
+			}
+			return ;
+		}
+		// 0~D 행을 변경
+		if(index==D){ return ;}
+		
+		int [] temp=new int[W];
+		System.arraycopy(map[index], 0, temp, 0, W);
+		System.arraycopy(a0, 0, map[index], 0, W);
+		print(map);
+		// index+1 번째줄에 약품처리  0
+		dfs(cnt+1, index+1,k);
+		System.arraycopy(a1, 0, map[index], 0, W);
+		print(map);
+		// index+1 번째줄에 약품처리  1
+		dfs(cnt+1, index+1,k);
+		// index+1 번째줄에 약품처리 안함 ,처리횟수 증가 안함
+		System.arraycopy(temp , 0, map[index], 0, W);
+		print(map);
+		dfs(cnt, index+1,k);
+	}
+	
+	static void print(int[][] map2) {
+		for (int i = 0; i < map2.length; i++) {
+			System.out.println(Arrays.toString(map2[i]));
+		}
+		System.out.println("---------->");
+	}
+	public static boolean check(){
+		for (int j = 0; j < W; j++) {// 칼럼별 검사!!
+			int cnt=1;  // 자신 1
+			for (int i = 1; i < D; i++) {
+				if(map[i-1][j]==map[i][j]){
+					cnt++;
+				}else {
+					cnt=1;  // 다른 번호로 시작 1
+				}
+				if(cnt==K){break;}
+			}
+			if(cnt<K){return false;}
+		}
+		return true;
+	}
 }
+/*
+1
+5 6 3
+1 0 1 1 0 1
+1 1 0 1 0 0
+0 0 0 1 1 1
+1 1 1 0 1 0
+0 1 1 0 0 1
+
+6 8 3         
+0 0 1 0 1 0 0 1
+0 1 0 0 0 1 1 1
+0 1 1 1 0 0 0 0
+1 1 1 1 0 0 0 1
+0 1 1 0 1 0 0 1
+1 0 1 0 1 1 0 1
+
+*/

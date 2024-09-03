@@ -3,7 +3,7 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.StringTokenizer;
 
-public class Solution2112_보호필름 {
+public class Solution2112_보호필름{
 
 	static int T, D, W, K;
 	static int[][] map;
@@ -90,28 +90,21 @@ public class Solution2112_보호필름 {
 
 	}
 
-	private static boolean QC(int[][] arr) {
-		int okLine = 0;
+	static boolean QC(int[][] arr) {
+		int cnt = 0;
 		for (int c = 0; c < W; c++) {
-
-			for (int r = 0; r <= D - K; r++) {
-				int temp = arr[r][c];
-				int cnt = 0;
-				for (int k = r; k < r + K; k++) {
-					if (arr[k][c] != temp) {
-						break;
-					} else {
-						cnt++;
-					}
-				}
-				if (cnt >= K) {
-					okLine++;
-					break;
+			int temp = 0;
+			for (int r = 1; r < D; r++) {
+				if(arr[r][c]==arr[r-1][c]) {
+					temp++;
+					if(temp==K-1) break;
+				}else {
+					temp = 0;
 				}
 			}
-
+			if(temp==K-1)cnt++;
 		}
-		return okLine == W;
+		return cnt==W;
 	}
 
 }
