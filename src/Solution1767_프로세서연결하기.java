@@ -55,14 +55,13 @@ public class Solution1767_프로세서연결하기 {
 	}
 
 	private static void dfs(int depth, int maxCore, int minLine ) {
+		if(N-depth+maxCore<max)return;
 		if (depth == CC) {
-			if (max != maxCore) {
-				max = Math.max(maxCore, max);
-				if (max == maxCore) {
-					min = minLine;
-				}
-			} else {
-				min = Math.min(min, minLine);
+			if (maxCore > max) {
+			    max = maxCore;
+			    min = minLine;
+			} else if (maxCore == max) {
+			    min = Math.min(min, minLine);
 			}
 			return;
 		}
