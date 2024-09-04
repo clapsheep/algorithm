@@ -53,7 +53,6 @@ public class Solution1767_프로세서연결하기 {
 			System.out.println(sb.toString());
 		}
 	}
-
 	private static void dfs(int depth, int coreSum, int lineSum) {
 		if (CC - depth + coreSum < max)
 			return;
@@ -64,6 +63,7 @@ public class Solution1767_프로세서연결하기 {
 			}
 			if (coreSum == max) {
 				min = Math.min(min, lineSum);
+
 			}
 			return;
 		}
