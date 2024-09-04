@@ -38,7 +38,7 @@ public class Solution1767_프로세서연결하기 {
 				for (int j = 0; j < N; j++) {
 					map[i][j] = Integer.parseInt(st.nextToken());
 					if (map[i][j] == 1) {
-						if (!(i == 0 || j == 0)) {
+						if (!(i == 0 || j == 0 || i == N - 1 || j == N - 1)) {
 							Cores.add(new Core(i, j));
 						}
 					}
@@ -46,23 +46,24 @@ public class Solution1767_프로세서연결하기 {
 			}
 			CC = Cores.size();
 			max = 0;
-			min = N * N;
-			
+			min = N * N + 1;
+
 			dfs(0, 0, 0);
 			sb.append(min);
 			System.out.println(sb.toString());
 		}
 	}
 
-	private static void dfs(int depth, int maxCore, int minLine ) {
+	private static void dfs(int depth, int coreSum, int lineSum) {
+		if (CC - depth + coreSum < max)
+			return;
 		if (depth == CC) {
-			if (max != maxCore) {
-				max = Math.max(maxCore, max);
-				if (max == maxCore) {
-					min = minLine;
-				}
-			} else {
-				min = Math.min(min, minLine);
+			if (coreSum > max) {
+				max = coreSum;
+				min = lineSum;
+			}
+			if (coreSum == max) {
+				min = Math.min(min, lineSum);
 			}
 			return;
 		}
@@ -74,10 +75,11 @@ public class Solution1767_프로세서연결하기 {
 		Core curr = Cores.get(depth); // 현재 depth의 코어 꺼내기
 		for (int d = 0; d < 4; d++) {
 			if (!isPossible(curr, d)) { // 끝까지 갈 수 있는 곳이 아니면?
-				dfs(depth + 1, maxCore, minLine);
+				dfs(depth + 1, coreSum, lineSum);
 			} else {
 				int currLine = calcLine(curr, d); // 갈 수 있다면? 전선연결하고 해당 갯수 반환;
-				dfs(depth + 1, maxCore + 1, minLine + currLine);
+				dfs(depth + 1, coreSum + 1, lineSum + currLine);
+
 			}
 			for (int i = 0; i < N; i++) {
 				System.arraycopy(temp[i], 0, map[i], 0, N);
@@ -108,7 +110,7 @@ public class Solution1767_프로세서연결하기 {
 			c += dc[d];
 			if (!check(r, c))
 				return true;
-			if (map[r][c] == 2 || map[r][c]==1)
+			if (map[r][c] == 2 || map[r][c] == 1)
 				return false;
 		}
 
