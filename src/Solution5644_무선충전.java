@@ -1,97 +1,124 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
-class BC {
-	int x, y, P, C;
-	boolean isInA = false;
-	boolean isInB = false;
-
-	public BC(int x, int y, int p, int c) {
-		this.x = x;
-		this.y = y;
-		this.P = p;
-		this.C = c;
-	}
-
-}
-
 public class Solution5644_무선충전 {
-	static int T, M, BC, sumA, sumB, time;
+	static int T, M, C, sum;
 	static int N = 10;
-	static int[] A, B;
-	static List<BC> BCs = new ArrayList<>();
+	static List<Integer> A, B;
 	static int[][] map = new int[N][N];
-	static int[] dr = { -1, 0, 1, 0 };
-	static int[] dc = { 0, 1, 0, -1 };
+	static int[] dr = { 0, -1, 0, 1, 0 };
+	static int[] dc = { 0, 0, 1, 0, -1 };
+	static List<int[]>[] batteries;
+	static int[] power;
 
 	public static void main(String[] args) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		T = Integer.parseInt(br.readLine());
 		for (int t = 1; t <= T; t++) {
 			StringTokenizer st = new StringTokenizer(br.readLine());
-			M = Integer.parseInt(st.nextToken()); // 시간
-			BC = Integer.parseInt(st.nextToken()); // 충전기 갯수
-
-			A = new int[M]; // A 경로
-			B = new int[M]; // B 경로
+			M = Integer.parseInt(st.nextToken()); // 이동할 시간
+			C = Integer.parseInt(st.nextToken()); // 배터리 개수
+			A = new ArrayList<>();
+			B = new ArrayList<>();
 			st = new StringTokenizer(br.readLine());
 			for (int i = 0; i < M; i++) {
-				A[i] = Integer.parseInt(st.nextToken());
+				A.add(Integer.parseInt(st.nextToken())); // A의 이동 경로
 			}
 			st = new StringTokenizer(br.readLine());
 			for (int i = 0; i < M; i++) {
-				B[i] = Integer.parseInt(st.nextToken());
+				B.add(Integer.parseInt(st.nextToken())); // B의 이동 경로
 			}
-
-			for (int i = 1; i <= BC; i++) {
+			batteries = new ArrayList[C];
+			for (int i = 0; i < C; i++) {
+				batteries[i] = new ArrayList<>();
+			}
+			power = new int[C];
+			for (int i = 0; i < C; i++) {
 				st = new StringTokenizer(br.readLine());
-				int x = Integer.parseInt(st.nextToken()) - 1;// x
-				int y = Integer.parseInt(st.nextToken()) - 1;// y
-				int C = Integer.parseInt(st.nextToken());// C
-				int P = Integer.parseInt(st.nextToken());// P
-
-				BCs.add(new BC(x, y, C, P));
+				int r = Integer.parseInt(st.nextToken()) - 1; // 현재 입력받은 배터리의 r
+				int c = Integer.parseInt(st.nextToken()) - 1; // 현재 입력받은 배터리의 c
+				int range = Integer.parseInt(st.nextToken()); // 현재 입력받은 배터리의 범위
+				power[i] = Integer.parseInt(st.nextToken()); // 현재 입력받은 배터리의 파워
+				for (int j = 0; j < N; j++) { // 배터리 범위 좌표 추가
+					for (int l = 0; l < N; l++) {
+						int distr = Math.abs(r - j);
+						int distc = Math.abs(c - l);
+						if (distr + distc <= range) {
+							batteries[i].add(new int[] { l, j });
+						}
+					}
+				}
 			}
-			time = 0;
-			int[] startA = { 0, 0 };
-			int[] startB = { 9, 9 };
-
-			calc(startA, startB);// 입력받은 위치의 충전용량 더하기
+			int rA = 0;
+			int cA = 0;
+			int rB = 9;
+			int cB = 9;
+			int sum = 0;
 			for (int i = 0; i < M; i++) {
+				sum += calc(rA, cA, rB, cB);
 
+				int dirA = A.get(i);
+				int dirB = B.get(i);
+
+				rA = rA + dr[dirA];
+				cA = cA + dc[dirA];
+				rB = rB + dr[dirB];
+				cB = cB + dc[dirB];
 			}
-
+			sum += calc(rA, cA, rB, cB);
+			System.out.println(sum);
 		}
-
 	}
 
-	private static void calc(int[] a, int[] b) {
-
-		int tempA = 0;
-		int tempB = 0;
-		
-		for (int j = 0; j < BC; j++) {
-			BC charger = BCs.get(j);
-			
-			if (isInCharger(a, charger)) {
-				charger.isInA = true;
-				tempA++;
-			}
-			if (isInCharger(b, charger)) {
-				charger.isInB = true;
-				tempB++;
+	private static int calc(int rA, int cA, int rB, int cB) {
+		int sum = 0;
+		PriorityQueue<Integer> chargeA = new PriorityQueue<>((o1, o2) -> o2 - o1);
+		PriorityQueue<Integer> chargeB = new PriorityQueue<>((o1, o2) -> o2 - o1);
+		for (int i = 0; i < C; i++) { // 각 배터리 조회
+			int loop = batteries[i].size(); // 해당 배터리가 가진 모든 좌표
+			for (int j = 0; j < loop; j++) {
+				if (batteries[i].get(j)[0] == rA && batteries[i].get(j)[1] == cA) {
+					chargeA.offer(power[i]);
+				}
+				if (batteries[i].get(j)[0] == rB && batteries[i].get(j)[1] == cB) {
+					chargeB.offer(power[i]);
+				}
 			}
 		}
-		
-		
 
-	}
-
-	private static boolean isInCharger(int[] person, BC charger) {
-		return Math.abs(charger.y - person[0]) + Math.abs(charger.x - person[1]) <= charger.C;
+		int a1 = 0, b1 = 0, a2 = 0, b2 = 0;
+		if (!chargeA.isEmpty()) {
+			a1 = chargeA.poll(); // A가 있는 곳 중 가장 큰 파워
+		} 
+		if (!chargeB.isEmpty()) {
+			b1 = chargeB.poll();  // B가 있는 곳 중 가장 큰 파워
+		}
+		if (!chargeA.isEmpty()) {
+			a2 = chargeA.poll(); // A가 있는 곳 중 두번째 큰 파워(겹친 곳이 없으면 0이겠지?)
+		}
+		if (!chargeB.isEmpty()) {
+			b2 = chargeB.poll(); // B가 있는 곳 중 두번째 큰 파워(겹친 곳이 없으면 0이겠지?)
+		}
+		 
+		if (a1 == b1) { // 가장 큰 파워가 같다는 것은 둘다 큰 파워 범주안에 들어있다.
+			if (a2 > b2) { // 그러면 혹시 다른 배터리 구간과 겹친 곳이 있는지 체
+				sum += (b1 + a2);
+			} else if (a2 < b2) {
+				sum += (a1 + b2);
+			} else {
+				sum += a1;
+			}
+		} else {
+			sum += (a1 + b1);
+		}
+		return sum;
 	}
 
 }
