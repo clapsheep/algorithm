@@ -3,10 +3,12 @@ package study0905;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class bj16197_두동전 {
-	static int N, M, min;
+	static int N, M;
 	static char[][] map;
 	static int[] dr = { 0, 0, -1, 1 };
 	static int[] dc = { -1, 1, 0, 0 };
@@ -39,56 +41,63 @@ public class bj16197_두동전 {
 				}
 			}
 		}
-		min = Integer.MAX_VALUE;
-		click(coin1, coin2, 0);
-		System.out.println(min > 10 ? -1 : min);
+
+		int res = bfs(coin1, coin2);
+		System.out.println(res > 10 ? -1 : res);
 	}
 
-	// c1과 c2의 좌표가 밖으로 나가면? return;
-	// 근데 둘 중에 1개만 나가야 함.
-	static void click(int[] c1, int[] c2, int cnt) {
-		if (checkOut(c1) || checkOut(c2)) {
-			if (checkOut(c1) && checkOut(c2)) {
-				return;
-			} else {
-				min = Math.min(min, cnt);
-				return;
+	static int bfs(int[] c1, int[] c2) {
+		Queue<int[]> q = new LinkedList<>();
+		int cnt = 0;
+		q.offer(c1);
+		q.offer(c2);
+
+		while (!q.isEmpty()) {
+			int size = q.size();
+			cnt++;
+			if (cnt > 10)
+				return -1;
+			for (int i = 0; i < size / 2; i++) {
+				int[] cur1 = q.poll();
+				int[] cur2 = q.poll();
+
+				for (int d = 0; d < 4; d++) {
+					int nr1 = cur1[0] + dr[d];
+					int nc1 = cur1[1] + dc[d];
+					int nr2 = cur2[0] + dr[d];
+					int nc2 = cur2[1] + dc[d];
+					if (!check(nr1, nc1) && !check(nr2, nc2)) { // 둘다 나가면 안되고,
+						continue;
+						// 둘중에 하나가 나가면 OK
+					} else if ((!check(nr1, nc1) && check(nr2, nc2)) || (check(nr1, nc1) && !check(nr2, nc2))) {
+						return cnt;
+					} else { // 둘다 안에 있으
+						if (map[nr1][nc1] == '#') {
+							q.offer(cur1);
+						}
+						if (map[nr2][nc2] == '#') {
+							q.offer(cur2);
+						}
+						if (map[nr1][nc1] == '.' || map[nr1][nc1] == 'o') {
+							q.offer(new int[] { nr1, nc1 });
+
+						}
+						if (map[nr2][nc2] == '.' || map[nr2][nc2] == 'o') {
+							q.offer(new int[] { nr2, nc2 });
+
+						}
+					}
+				}
 			}
+			
 		}
-		for (int d = 0; d < 4; d++) {
-			int[] nc1 = move(c1, d);
-			int[] nc2 = move(c2, d);
-			if (nc1 == null || nc2 == null)
-				continue;
-			if (v1[nc1[0]][nc1[1]] || v2[nc2[0]][nc2[1]])
-				continue;
-			v1[nc1[0]][nc1[1]] = true;
-			v2[nc2[0]][nc2[1]] = true;
-			click(nc1, nc2, cnt + 1);
-			v1[nc1[0]][nc1[1]] = false;
-			v2[nc2[0]][nc2[1]] = false;
 
-		}
+		return -1;
 
 	}
 
-	private static int[] move(int[] coin, int d) {
-		int nr = coin[0] + dr[d];
-		int nc = coin[1] + dc[d];
-		if (nr < 0 || nr >= N || nc < 0 || nc >= M || map[nr][nc] == '#') {
-//		if (map[nr][nc] == '#') {
-			return null;
-		} else {
-			int[] ncoin = { nr, nc };
-			return ncoin;
-		}
-	}
-
-	static boolean checkOut(int[] coin) {
-		if (coin[0] >= 0 && coin[0] < N && coin[1] >= 0 && coin[1] < M)
-			return false; // 안나갔다.
-		else
-			return true; // 나갔다.
+	private static boolean check(int r, int c) {
+		return r >= 0 && c >= 0 && r < N && c < M;
 	}
 
 }
