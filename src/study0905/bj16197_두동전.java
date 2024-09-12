@@ -14,8 +14,7 @@ public class bj16197_두동전 {
 	static int[] dc = { -1, 1, 0, 0 };
 	static int[] coin1 = new int[2], coin2 = new int[2];
 	static boolean isFindCoin1;
-	static boolean[][] v1;
-	static boolean[][] v2;
+
 
 	public static void main(String[] args) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -23,8 +22,6 @@ public class bj16197_두동전 {
 		N = Integer.parseInt(st.nextToken());
 		M = Integer.parseInt(st.nextToken());
 		map = new char[N][M];
-		v1 = new boolean[N][M];
-		v2 = new boolean[N][M];
 		isFindCoin1 = false;
 		for (int i = 0; i < N; i++) {
 			map[i] = br.readLine().toCharArray();
