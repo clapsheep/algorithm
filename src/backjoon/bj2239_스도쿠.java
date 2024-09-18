@@ -9,98 +9,76 @@ public class bj2239_스도쿠 {
 	static int[][] map = new int[9][9];
 	static List<int[]> e = new ArrayList<>();
 	static int size;
-	static boolean[] v;
+	static StringBuilder sb;
 
 	public static void main(String[] args) throws Exception {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		sb = new StringBuilder();
 		for (int i = 0; i < 9; i++) {
-			char[] c = br.readLine().toCharArray();
+			String input = br.readLine();
 			for (int j = 0; j < 9; j++) {
-				map[i][j] = c[j] - '0';
+				map[i][j] = input.charAt(j) - '0';
 				if (map[i][j] == 0) {
 					e.add(new int[] { i, j });
 				}
 			}
 		}
-
 		size = e.size();
-		v = new boolean[size];
-		dfs(0);
 
+		dfs(0);
+		System.out.println(sb.toString());
 	}
 
-	private static void dfs(int cnt) {
+	private static boolean dfs(int cnt) {
 		if (cnt == size) {
 			for (int i = 0; i < 9; i++) {
 				for (int j = 0; j < 9; j++) {
-					System.out.print(map[i][j]+" ");
+					sb.append(map[i][j]);
 				}
-				System.out.println();
+				sb.append("\n");
 			}
-			return;
+			return true;
 		}
 
 		int[] cur = e.get(cnt);
-		if (v[cnt]) {
-			dfs(cnt + 1);
-		}
-		
-		int temp = map[cur[0]][cur[1]];
+
 		for (int j = 1; j <= 9; j++) {
-			if (checkRow(cur[0], j))
-				continue;
-			if (checkCol(cur[1], j))
-				continue;
-			if (check3x3(cur, j))
-				continue;
-			map[cur[0]][cur[1]] = j;
-			v[cnt] = true;
-			dfs(cnt + 1);
-			v[cnt] = false;
-			map[cur[0]][cur[1]] = temp;
-		}
-
-	}
-
-	private static boolean check3x3(int[] cur, int num) {
-		int r = 0;
-		if (cur[0] < 6) {
-			r = 3;
-		} else if (cur[0] < 9) {
-			r = 6;
-		}
-		int c = 0;
-		if (cur[1] < 6) {
-			c = 3;
-		} else if (cur[1] < 9) {
-			c = 6;
-		}
-		for (int i = r; i < r + 3; i++) {
-			for (int j = c; j < c + 3; j++) {
-				if (map[i][j] == num) {
+			if (isValid(cur[0], cur[1], j)) {
+				map[cur[0]][cur[1]] = j;
+				if (dfs(cnt + 1)) {
 					return true;
 				}
+				map[cur[0]][cur[1]] = 0;
 			}
 		}
 		return false;
+
 	}
 
-	private static boolean checkCol(int c, int num) {
+	private static boolean isValid(int row, int col, int num) {
+		// Check row
 		for (int i = 0; i < 9; i++) {
-			if (map[i][c] == num) {
-				return true;
-			}
+			if (map[row][i] == num)
+				return false;
 		}
-		return false;
-	}
 
-	private static boolean checkRow(int r, int num) {
+		// Check column
 		for (int i = 0; i < 9; i++) {
-			if (map[r][i] == num) {
-				return true;
+			if (map[i][col] == num)
+				return false;
+		}
+
+		// Check 3x3 box
+		int boxRow = row - row % 3;
+		int boxCol = col - col % 3;
+		for (int i = boxRow; i < boxRow + 3; i++) {
+			for (int j = boxCol; j < boxCol + 3; j++) {
+				if (map[i][j] == num)
+					return false;
 			}
 		}
-		return false;
+
+		return true;
 	}
 
 }
