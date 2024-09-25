@@ -2,10 +2,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.PriorityQueue;
 import java.util.Queue;
-import java.util.Scanner;
 import java.util.StringTokenizer;
 
-import javax.print.DocFlavor.STRING;
 
 public class bj1197_최소스패닝트리 {
 	static int V, E;
