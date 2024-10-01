@@ -88,10 +88,11 @@ public class Solution_임스와그래프 {
 			int H = distForH[0];
 			
 			if (I == INF) {
-				sb.append("NO");
+			    sb.append("NO");
 			} else {
-				sb.append(I > H ? "NO" : "YES " + I);
+			    sb.append(I <= H ? "YES " + I : "NO");
 			}
+
 
 			System.out.println(sb.toString());
 		}
