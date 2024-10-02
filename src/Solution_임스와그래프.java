@@ -25,7 +25,7 @@ public class Solution_임스와그래프 {
 	static final int INF = Integer.MAX_VALUE;
 	static int V = 52;
 	static int T, E;
-	static List<Node>[] adjForI, adjForH;
+	static List<Node>[] adj;
 	static int[] distForI, distForH;
 
 	public static void main(String[] args) throws Exception {
@@ -36,56 +36,39 @@ public class Solution_임스와그래프 {
 			sb.append("#").append(t).append(" ");
 			E = Integer.parseInt(br.readLine());
 
-			adjForI = new ArrayList[V];
-			adjForH = new ArrayList[V];
+			adj = new ArrayList[V];
+			
 			for (int i = 0; i < V; i++) {
-				adjForI[i] = new ArrayList<>();
-				adjForH[i] = new ArrayList<>();
+				adj[i] = new ArrayList<>();
+			
 			}
 			distForI = new int[V];
 			distForH = new int[V];
 			Arrays.fill(distForI, INF);
 			Arrays.fill(distForH, INF);
-
 			for (int i = 0; i < E; i++) {
 				StringTokenizer st = new StringTokenizer(br.readLine());
 				int start = convert(st.nextToken().charAt(0));
 				int end = convert(st.nextToken().charAt(0));
 				int w = Integer.parseInt(st.nextToken());
 
-				boolean isExsist = false;
-				for (Node n : adjForI[start]) {
-				    if (n.v == end) {
-				        isExsist = true;
-				        n.w = w;
-				        break;
-				    }
-				}
-
-				boolean isExsistForH = false;
-				for (Node n : adjForH[end]) {
-				    if (n.v == start) {
-				        isExsistForH = true;
-				        n.w = w;
-				        break;
-				    }
-				}
-
-				// 새로운 간선 추가
-				if (!isExsist) {
-				    adjForI[start].add(new Node(end, w));
-				}
-				if (!isExsistForH) {
-				    adjForH[end].add(new Node(start, w));
-				}
-
-
+//				boolean isExsist = false;
+//				for (Node n : adj[start]) {
+//				    if (n.v == end) {
+//				        isExsist = true;
+//				        n.w = w;
+//				        break;
+//				    }
+//				}
+//				if (!isExsist) {
+				    adj[start].add(new Node(end, w));
+//				}
 			}
 
-			djikstraForI(0);
-			djikstraForH(51);
-			int I = distForI[51];
-			int H = distForH[0];
+			int I = djikstra(0,51,distForI);
+			int H = djikstra(51,0,distForH);
+			
+			
 			
 			if (I == INF) {
 			    sb.append("NO");
@@ -93,50 +76,31 @@ public class Solution_임스와그래프 {
 			    sb.append(I <= H ? "YES " + I : "NO");
 			}
 
-
 			System.out.println(sb.toString());
 		}
 
 	}
 
-	private static void djikstraForH(int start) {
+
+	private static int djikstra(int start,int end, int[] dist) {
 		PriorityQueue<Node> pq = new PriorityQueue<>();
 		boolean[] v = new boolean[V];
-		distForH[start] = 0;
+
+		dist[start] = 0;
 		pq.add(new Node(start, 0));
 		while (!pq.isEmpty()) {
 			Node curr = pq.poll();
 			if (v[curr.v])
 				continue;
 			v[curr.v] = true;
-			for (Node node : adjForH[curr.v]) {
-				if (!v[node.v] && distForH[node.v] > distForH[curr.v] + node.w) {
-					distForH[node.v] = distForH[curr.v] + node.w;
-					pq.add(new Node(node.v, distForH[node.v]));
+			for (Node node : adj[curr.v]) {
+				if (!v[node.v] && dist[node.v] > dist[curr.v] + node.w) {
+					dist[node.v] = dist[curr.v] + node.w;
+					pq.add(new Node(node.v, dist[node.v]));
 				}
 			}
 		}
-
-	}
-
-	private static void djikstraForI(int start) {
-		PriorityQueue<Node> pq = new PriorityQueue<>();
-		boolean[] v = new boolean[V];
-		distForI[start] = 0;
-		pq.add(new Node(start, 0));
-		while (!pq.isEmpty()) {
-			Node curr = pq.poll();
-			if (v[curr.v])
-				continue;
-			v[curr.v] = true;
-			for (Node node : adjForI[curr.v]) {
-				if (!v[node.v] && distForI[node.v] > distForI[curr.v] + node.w) {
-					distForI[node.v] = distForI[curr.v] + node.w;
-					pq.add(new Node(node.v, distForI[node.v]));
-				}
-			}
-		}
-
+		return dist[end];
 	}
 
 	private static int convert(char c) {
