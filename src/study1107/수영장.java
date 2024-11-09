@@ -10,7 +10,7 @@ import java.util.StringTokenizer;
 
 public class 수영장 {
 	static int N, M;
-	static int[][] map;
+	static long[][] map;
 	static int[] dr = { 1, 0, -1, 0 };
 	static int[] dc = { 0, 1, 0, -1 };
 	static boolean[][] v ;
@@ -20,14 +20,14 @@ public class 수영장 {
 		N = Integer.parseInt(st.nextToken());
 		M = Integer.parseInt(st.nextToken());
 		v = new boolean[N][M];
-		map = new int[N][M];
+		map = new long[N][M];
 		for (int i = 0; i < N; i++) {
 			st = new StringTokenizer(br.readLine());
 			for (int j = 0; j < M; j++) {
 				map[i][j] = Integer.parseInt(st.nextToken());
 			}
 		}
-		int res=0;
+		long res=0;
 		for (int i = 1; i < N - 1; i++) {
 			for (int j = 1; j < M - 1; j++) {
 				if(v[i][j])continue;
@@ -41,15 +41,15 @@ public class 수영장 {
 	// 2. 해당 칸에서 bfs 실행
 	// 	bfs-1.4방 탐색해서 자신보다 높으면 그중 가장 낮은 것을 level에 담음
 	//  bfs-2.4밤 탐색해서 자신보다 낮으면 
-	private static int bfs(int i, int j) {
+	private static long bfs(int i, int j) {
 		Queue<int[]> q = new LinkedList<>();
 		boolean[][] localV = new boolean[N][M]; 
 		q.offer(new int[] { i, j });
 		localV[i][j] = true;
 		List<int[]> list = new ArrayList<>();
 		list.add(new int[] {i,j});
-		int startHeight = map[i][j];
-		int level = 100000;
+		long startHeight = map[i][j];
+		long level = 100000;
 		while (!q.isEmpty()) {
 			int[] cur = q.poll();
 			for (int d = 0; d < 4; d++) {
@@ -72,7 +72,7 @@ public class 수영장 {
 		}
 		int water =0;
 		for (int[] l : list) {
-			int temp =level-map[l[0]][l[1]];
+			long temp =level-map[l[0]][l[1]];
 			v[l[0]][l[1]] = true;
 			if(temp > 0) {
 			water += temp; 
