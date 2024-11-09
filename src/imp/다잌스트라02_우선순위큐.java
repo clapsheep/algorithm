@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Scanner;
 
 public class 다잌스트라02_우선순위큐 {
-	static class Node {
+	static class Edge {
 		int V, W;
 
-		public Node(int v, int w) {
+		public Edge(int v, int w) {
 			V = v;
 			W = w;
 		}
@@ -18,7 +18,7 @@ public class 다잌스트라02_우선순위큐 {
 	static final int INF = Integer.MAX_VALUE;
 	static int V, E;
 
-	static List<Node>[] adj;
+	static List<Edge>[] adj;
 	static int[] dist;
 
 	public static void main(String[] args) {
@@ -35,7 +35,7 @@ public class 다잌스트라02_우선순위큐 {
 			int a = sc.nextInt();
 			int b = sc.nextInt();
 			int w = sc.nextInt();
-			adj[a].add(new Node(b, w));
+			adj[a].add(new Edge(b, w));
 		}
 		dijkstra(0);
 		System.out.println(Arrays.toString(dist));
@@ -58,7 +58,7 @@ public class 다잌스트라02_우선순위큐 {
 //			if(idx == -1) break;
 
 			v[idx] = true; // 해당 지점 뽑았어
-			for (Node node : adj[idx]) {
+			for (Edge node : adj[idx]) {
 				if (!v[node.V] && dist[node.V] > dist[idx] + node.W) {
 					dist[node.V] = dist[idx] + node.W;
 				}
