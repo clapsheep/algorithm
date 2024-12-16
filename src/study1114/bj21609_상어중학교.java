@@ -76,26 +76,26 @@ public class bj21609_상어중학교 {
 			
 			while (true) {
 				v=new boolean[N][N];
-			for (int i = 0; i < N; i++) {
-				for (int j = 0; j < N; j++) {
-					if (map[i][j] != -1 && map[i][j] != 0 && map[i][j] != -2 && !v[i][j]) {
-						bfs(i, j);
+				for (int i = 0; i < N; i++) {
+					for (int j = 0; j < N; j++) {
+						if (map[i][j] != -1 && map[i][j] != 0 && map[i][j] != -2 && !v[i][j]) {
+							bfs(i, j);
+						}
 					}
 				}
-			}
 
-			if(gs.isEmpty())break;
-			Group cur = gs.poll();
-			res += Math.pow(cur.size, 2);
-
-			for (int[] pos : cur.pos) {
-				map[pos[0]][pos[1]] = -2;
+				if(gs.isEmpty())break;
+				Group cur = gs.poll();
+				res += Math.pow(cur.size, 2);
+	
+				for (int[] pos : cur.pos) {
+					map[pos[0]][pos[1]] = -2;
+				}
+				gravity();
+				rotate();
+				gravity();
+				gs.clear();
 			}
-			gravity();
-			rotate();
-			gravity();
-			gs.clear();
-		}
 		System.out.println(res);
 	}
 
